@@ -1,6 +1,10 @@
 package profiluefter.fez2.rendering;
 
+import org.joml.Matrix4f;
+import profiluefter.fez2.entities.Entity;
 import profiluefter.fez2.rendering.models.TexturedModel;
+import profiluefter.fez2.rendering.shader.StaticShader;
+import profiluefter.fez2.tools.Maths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -16,10 +20,13 @@ public class Renderer {
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	public void render(TexturedModel model) {
+	public void render(Entity entity, StaticShader shader) {
+		TexturedModel model = entity.getModel();
 		glBindVertexArray(model.getRawModel().getVaoID());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(),entity.getRotX(),entity.getRotY(),entity.getRotZ(),entity.getScale());
+		shader.loadTransformationMatrix(transformationMatrix);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, model.getTexture().getTextureID());
 		glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);

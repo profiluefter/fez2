@@ -1,5 +1,7 @@
 package profiluefter.fez2;
 
+import org.joml.Vector3f;
+import profiluefter.fez2.entities.Entity;
 import profiluefter.fez2.rendering.Display;
 import profiluefter.fez2.rendering.Loader;
 import profiluefter.fez2.rendering.Renderer;
@@ -11,6 +13,12 @@ import profiluefter.fez2.rendering.shader.StaticShader;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 public class Starter {
+	private static boolean running = true;
+
+	public static void stop() {
+		running = false;
+	}
+
 	public static void main(String[] args) {
 		Display.create();
 
@@ -40,11 +48,16 @@ public class Starter {
 		RawModel model = loader.loadToVAO(vertices,textureCoords,indices);
 		ModelTexture texture = new ModelTexture(loader,"fez_original");
 		TexturedModel texturedModel = new TexturedModel(model,texture);
+		Entity entity = new Entity(texturedModel, new Vector3f(-0.5f,0,0),0,0,0,1);
+		Entity entity1 = new Entity(texturedModel, new Vector3f(0.5f,0.7f,0),0,0,0,0.5f);
 
-		while (!glfwWindowShouldClose(Display.getWindow())) {
+		while (!glfwWindowShouldClose(Display.getWindow()) && running) {
+			entity.increaseRotation(0,0.5f,0);
+			entity1.increasePosition(0,-0.0005f,0);
 			renderer.prepare();
 			shader.start();
-			renderer.render(texturedModel);
+			renderer.render(entity, shader);
+			renderer.render(entity1, shader);
 			shader.stop();
 			Display.update();
 		}

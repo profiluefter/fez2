@@ -1,5 +1,8 @@
 package profiluefter.fez2.rendering.shader;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -7,9 +10,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.*;
 
 public abstract class Shader {
 
@@ -17,7 +20,9 @@ public abstract class Shader {
 	private int vertexShaderID;
 	private int fragmentShaderID;
 
-	public Shader(InputStream vertexFile, InputStream fragmentFile){
+	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
+
+	Shader(InputStream vertexFile, InputStream fragmentFile){
 		vertexShaderID = loadShader(vertexFile,GL20.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(fragmentFile,GL20.GL_FRAGMENT_SHADER);
 		programID = GL20.glCreateProgram();
@@ -31,7 +36,7 @@ public abstract class Shader {
 
 	protected abstract void getAllUniformLocations();
 
-	protected int getUniformLocation(String uniformName) {
+	int getUniformLocation(String uniformName) {
 		return glGetUniformLocation(programID,uniformName);
 	}
 
@@ -54,7 +59,7 @@ public abstract class Shader {
 
 	protected abstract void bindAttributes();
 
-	protected void bindAttribute(int attribute, String variableName){
+	void bindAttribute(int attribute, String variableName){
 		GL20.glBindAttribLocation(programID, attribute, variableName);
 	}
 
@@ -62,7 +67,17 @@ public abstract class Shader {
 		glUniform1f(location, value);
 	}
 
-	protected
+	protected void loadVector3f(int location, Vector3f vector) {
+		glUniform3f(location,vector.x,vector.y,vector.z);
+	}
+
+	protected void loadBoolean(int location, boolean value) {
+		GL20.glUniform1f(location, value ? 1 : 0);
+	}
+
+	void loadMatrix(int location, Matrix4f matrix) {
+		glUniformMatrix4fv(location, false, matrix.get(matrixBuffer));
+	}
 
 	private static int loadShader(InputStream stream, int type){
 		StringBuilder shaderSource = new StringBuilder();
