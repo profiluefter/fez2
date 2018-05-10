@@ -42,4 +42,7 @@ jobs:
       - run: gradle test
 
 
-
+notify:
+  webhooks:
+    # A list of hook hashes, containing the URL field
+    - url: https://skyhook.glitch.me/api/webhooks/444215020751028228/8V4zPA50BmZamP032viAg76MYsPnfNQCjOemxlW-m1Eun7cKvAjLRVKzYJZQAcOEhTeW/circleci
