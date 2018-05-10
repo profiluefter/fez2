@@ -11,8 +11,8 @@ public class Display {
 	private static boolean initialized = false;
 	@SuppressWarnings({"FieldCanBeLocal", "unused"})
 	private static GLFWErrorCallback errorCallback;
-	private static final int WINDOW_WIDTH = 1280;
-	private static final int WINDOW_HEIGHT = 720;
+	private static final int WINDOW_WIDTH = 2000;
+	private static final int WINDOW_HEIGHT = 1280;
 	private static long window;
 
 	private static void init() {
